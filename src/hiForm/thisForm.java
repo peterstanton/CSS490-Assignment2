@@ -25,6 +25,8 @@ public class thisForm {
     private JTextArea inputArea;
     private JButton runButton;
     private JLabel weatherimage;
+    private JLabel googleimage;
+
     public static void main(String[] args) {
         JFrame frame = new JFrame("thisForm");
         frame.setContentPane(new thisForm().mainPanel);
@@ -35,12 +37,18 @@ public class thisForm {
 
 
     private thisForm() {
-        ImageIcon icon = new ImageIcon( getClass().getResource("poweredby.png") );
+        ImageIcon weaIcon = new ImageIcon( getClass().getResource("poweredby.png") );
+        Image weaImage = weaIcon.getImage(); // transform it
+        Image newWeaImage = weaImage.getScaledInstance(200, 75,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+        weaIcon = new ImageIcon(newWeaImage);  // transform it back
+        weatherimage.setIcon(weaIcon);
 
-        Image image = icon.getImage(); // transform it
-        Image newimg = image.getScaledInstance(200, 75,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
-        icon = new ImageIcon(newimg);  // transform it back
-        weatherimage.setIcon(icon);
+        ImageIcon gooIcon = new ImageIcon( getClass().getResource("powered_by_google_on_white_hdpi.png") );
+        Image gooImage = gooIcon.getImage(); // transform it
+        Image newGooImage = gooImage.getScaledInstance(200, 75,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+        gooIcon = new ImageIcon(newGooImage);  // transform it back
+        googleimage.setIcon(gooIcon);
+
         exitButton.addActionListener(exiter -> System.exit(0));
         runButton.addActionListener(runner -> process(inputArea.getText()));
         weatherimage.addMouseListener(new MouseListener() {
@@ -77,7 +85,41 @@ public class thisForm {
 
             }
         });
+        googleimage.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (Desktop.isDesktopSupported()) {
+                    try {
+                        Desktop.getDesktop().browse(new URI("https://developers.google.com/maps/documentation/geocoding/intro"));
+                    } catch (Exception x) {
+                        //blah
+                    }
+
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
     }
+
 
     private void process(String input) {
         if(input.isEmpty()) {

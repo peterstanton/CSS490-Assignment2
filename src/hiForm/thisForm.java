@@ -3,15 +3,17 @@ package hiForm;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.swing.*;
+import javax.swing.text.html.HTMLDocument;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.security.cert.Certificate;
-import com.google.gson.*;
+import java.util.stream.Collectors;
 
+import com.google.gson.*;
 
 public class thisForm {
     private static final String baseGeocode ="https://maps.googleapis.com/maps/api/geocode/json?address=";
@@ -37,46 +39,28 @@ public class thisForm {
             String joined = String.join("+", parsed);
             joined += "&key=" + googleAPI;
             URL googleURL = new URL(baseGeocode + joined);
-            HttpsURLConnection toGoogle = new HttpsURLConnection(googleURL) {
-                @Override
-                public String getCipherSuite() {
-                    return null;
-                }
-
-                @Override
-                public Certificate[] getLocalCertificates() {
-                    return new Certificate[0];
-                }
-
-                @Override
-                public Certificate[] getServerCertificates() throws SSLPeerUnverifiedException {
-                    return new Certificate[0];
-                }
-
-                @Override
-                public void disconnect() {
-
-                }
-
-                @Override
-                public boolean usingProxy() {
-                    return false;
-                }
-
-                @Override
-                public void connect() throws IOException {
-
-                }
-            };
             googleURL.openConnection();
-            //toGoogle.setRequestMethod("GET");
-            //toGoogle.setRequestProperty("Accept", "application/json");
-            //InputStreamReader myreturn = new InputStreamReader(toGoogle.getInputStream());
-            JsonParser jp = new JsonParser(); //from gson
-            JsonElement root = jp.parse(new InputStreamReader((InputStream) toGoogle.getContent())); //Convert the input stream to a json element
-            JsonObject rootobj = root.getAsJsonObject(); //May be an array, may be an object.
-            String latLong = rootobj.get("zip_code").getAsString(); //just grab the zipcode
+            BufferedReader reader = new BufferedReader(new InputStreamReader(googleURL.openStream()));
+            StringBuffer buffer = new StringBuffer();
+            int read;
+            String result;
+            char[] chars = new char[1024];
+            try {
+                while ((read = reader.read(chars)) != -1)
+                    buffer.append(chars, 0, read);
 
+                result = buffer.toString();
+            }
+            catch(IOException e) {
+                //blah
+            }
+
+
+            //Gson gson = new Gson();
+            //String geoResponse = gson.fromJson(br.readLine(), String.class);
+
+
+            //JSONObject json = new JSONObject(jsonText);
         }
         catch(MalformedURLException e) {
             //blah

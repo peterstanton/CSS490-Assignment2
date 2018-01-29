@@ -35,6 +35,7 @@ public class thisForm {
 
     private void process(String input) {
         String[] parsed = input.split("\\W+");
+        String geoResult = new String();
         try {
             String joined = String.join("+", parsed);
             joined += "&key=" + googleAPI;
@@ -43,34 +44,31 @@ public class thisForm {
             BufferedReader reader = new BufferedReader(new InputStreamReader(googleURL.openStream()));
             StringBuffer buffer = new StringBuffer();
             int read;
-            String result;
+
             char[] chars = new char[1024];
             try {
                 while ((read = reader.read(chars)) != -1)
                     buffer.append(chars, 0, read);
 
-                result = buffer.toString();
+                geoResult = buffer.toString();
             }
             catch(IOException e) {
                 //blah
             }
-
-
-            //Gson gson = new Gson();
-            //String geoResponse = gson.fromJson(br.readLine(), String.class);
-
-
-            //JSONObject json = new JSONObject(jsonText);
         }
         catch(MalformedURLException e) {
-            //blah
-        }
-        catch(ProtocolException e) {
             //blah
         }
         catch(IOException e) {
 
         }
+        //stuff.
+        String[] geoParsed = geoResult.split("\n");
+        double geoLat = Double.parseDouble(geoResult.split("\n")[63].split(":")[1].replaceAll(",", ""));
+        double geoLong = Double.parseDouble((geoResult.split("\n")[64].split(":")[1]).replaceAll(",", ""));
+        String temp = new String();
+
+
     }
 
     //https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=YOUR_API_KEY

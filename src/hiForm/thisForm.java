@@ -1,19 +1,16 @@
 package hiForm;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.swing.*;
-import javax.swing.text.html.HTMLDocument;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.*;
-import java.security.cert.Certificate;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class thisForm {
     private static final String baseGeocode ="https://maps.googleapis.com/maps/api/geocode/json?address=";
@@ -26,6 +23,7 @@ public class thisForm {
     private JButton runButton;
     private JLabel weatherimage;
     private JLabel googleimage;
+    private JOptionPane resultWindow;
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("thisForm");
@@ -38,15 +36,15 @@ public class thisForm {
 
     private thisForm() {
         ImageIcon weaIcon = new ImageIcon( getClass().getResource("poweredby.png") );
-        Image weaImage = weaIcon.getImage(); // transform it
-        Image newWeaImage = weaImage.getScaledInstance(200, 75,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
-        weaIcon = new ImageIcon(newWeaImage);  // transform it back
+        Image weaImage = weaIcon.getImage();
+        Image newWeaImage = weaImage.getScaledInstance(194, 76,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+        weaIcon = new ImageIcon(newWeaImage);
         weatherimage.setIcon(weaIcon);
 
         ImageIcon gooIcon = new ImageIcon( getClass().getResource("powered_by_google_on_white_hdpi.png") );
-        Image gooImage = gooIcon.getImage(); // transform it
-        Image newGooImage = gooImage.getScaledInstance(200, 75,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
-        gooIcon = new ImageIcon(newGooImage);  // transform it back
+        Image gooImage = gooIcon.getImage();
+        Image newGooImage = gooImage.getScaledInstance(288, 36,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+        gooIcon = new ImageIcon(newGooImage);
         googleimage.setIcon(gooIcon);
 
         exitButton.addActionListener(exiter -> System.exit(0));
@@ -57,6 +55,7 @@ public class thisForm {
                 if (Desktop.isDesktopSupported()) {
                     try {
                         Desktop.getDesktop().browse(new URI("https://darksky.net/poweredby/"));
+                        return;
                     }
                     catch(Exception x) {
                         //blah
@@ -91,6 +90,7 @@ public class thisForm {
                 if (Desktop.isDesktopSupported()) {
                     try {
                         Desktop.getDesktop().browse(new URI("https://developers.google.com/maps/documentation/geocoding/intro"));
+                        return;
                     } catch (Exception x) {
                         //blah
                     }
@@ -128,10 +128,30 @@ public class thisForm {
         String[] parsed = input.split("\\W+");
         URL googleURL = processGeoURL(parsed);
         String geoResult = processResponse(googleURL);
-        double geoLat = Double.parseDouble(geoResult.split("\n")[63].split(":")[1].replaceAll(",", ""));
-        double geoLong = Double.parseDouble((geoResult.split("\n")[64].split(":")[1]).replaceAll(",", ""));
+        ArrayList<String> geoSplit = new ArrayList<String>(Arrays.asList(geoResult.split("\n")));
+        int geoLatIndex = -1;
+        int geoLongIndex = -1;
+        for(int i = 0; i < geoSplit.size(); i++){
+            if(geoSplit.get(i).contains("location")) {
+                geoLatIndex = i+1;
+                geoLongIndex = i+2;
+                break;
+            }
+        }
+        if(geoLatIndex == -1) {
+            return;
+        }
+        double geoLat = Double.parseDouble(geoSplit.get(geoLatIndex).split(":")[1].replaceAll(",", ""));
+        double geoLong = Double.parseDouble(geoSplit.get(geoLongIndex).split(":")[1].replaceAll(",", ""));
         URL darkSkyURL = processWeatherURL(geoLat, geoLong);
         String weatherResult = processResponse(darkSkyURL);
+        printResults(weatherResult);
+    }
+
+    private void printResults(String weatherResult) {
+        //stuff here.
+        String[] results = weatherResult.split(",");
+        String blah;
     }
 
     private URL processGeoURL(String[] parsed) {

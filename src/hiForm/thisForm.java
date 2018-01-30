@@ -7,7 +7,6 @@ import java.awt.event.MouseListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,7 +54,6 @@ public class thisForm {
                 if (Desktop.isDesktopSupported()) {
                     try {
                         Desktop.getDesktop().browse(new URI("https://darksky.net/poweredby/"));
-                        return;
                     }
                     catch(Exception x) {
                         //blah
@@ -90,7 +88,6 @@ public class thisForm {
                 if (Desktop.isDesktopSupported()) {
                     try {
                         Desktop.getDesktop().browse(new URI("https://developers.google.com/maps/documentation/geocoding/intro"));
-                        return;
                     } catch (Exception x) {
                         //blah
                     }
@@ -145,13 +142,17 @@ public class thisForm {
         double geoLong = Double.parseDouble(geoSplit.get(geoLongIndex).split(":")[1].replaceAll(",", ""));
         URL darkSkyURL = processWeatherURL(geoLat, geoLong);
         String weatherResult = processResponse(darkSkyURL);
-        printResults(weatherResult);
+        printResults(weatherResult,input);
     }
 
-    private void printResults(String weatherResult) {
+    private void printResults(String weatherResult, String locale) {
         //stuff here.
         String[] results = weatherResult.split(",");
-        String blah;
+        JOptionPane.showMessageDialog(null, "Hi", "Results for " + locale, JOptionPane.PLAIN_MESSAGE);
+
+
+        //should loop through with a switch tree and on switch, stuff values in a string builder, then
+        //spit it out when I'm done.
     }
 
     private URL processGeoURL(String[] parsed) {
